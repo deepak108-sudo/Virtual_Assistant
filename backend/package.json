@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/deepak108-sudo/Virtual_Assistant#readme",
   "dependencies": {
+    "axios": "^1.10.0",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.7.0",
     "cookie-parser": "^1.4.7",
