@@ -3,14 +3,14 @@ import React, { useContext, useState } from "react";
 import { LuEye } from "react-icons/lu";
 import { LuEyeClosed } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import { userDataContext } from "../context/userContext";
+import { UserDataContext } from "../context/userContext";
 import axios from "axios";
 
 
 const SignIn = () => {
   const bg = "/authBg.png";
   const [showPassword, setShowPassword] = useState(false);
-  const { serverUrl,userData, setUserData } = useContext(userDataContext);
+  const { serverUrl,userData, setUserData } = useContext(UserDataContext);
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");

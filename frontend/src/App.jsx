@@ -5,19 +5,19 @@ import SignUp from "./Pages/SignUp";
 import { Navigate } from "react-router-dom";
 import SignIn from "./Pages/SignIn";
 import Customize from "./Pages/Customize";
-import { userDataContext } from "./context/userContext";
+import { UserDataContext } from "./context/userContext";
 import Customize2 from "./Pages/Customize2";
 import Home from "./Pages/Home";
 
 const App = () => {
-  const {userData,setUserData} =useContext(userDataContext);
+  const {userData,setUserData} =useContext(UserDataContext);
 
   return (
     <Routes>
       <Route path="/" element={userData?.assistantImage?.length > 0 && userData?.assistantName ? <Home /> : <Navigate to="/customize" />} />
 
 
-      <Route path="/signup" element={!userData ? <SignUp /> : <Navigate to="/customize" />} />
+      <Route path="/signup" element={!userData ? <SignUp /> : <Navigate to="/" />} />
 
       <Route path="/signin" element={!userData ? <SignIn /> : <Navigate to="/" />} />
 

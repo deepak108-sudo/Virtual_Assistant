@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useContext } from "react";
-import { userDataContext } from "../context/userContext";
+import { UserDataContext } from "../context/userContext";
 import axios from "axios";
 import { MdKeyboardBackspace } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 const Customize2 = () => {
   const { userData, backendImage, selectedImage, setUserData, serverUrl } =
-    useContext(userDataContext);
+    useContext(UserDataContext);
   const [assistantName, setAssistantName] = useState(
     userData?.assistantName || ""
   );

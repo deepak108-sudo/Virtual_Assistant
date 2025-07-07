@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState } from "react";
 import Card from "../component/Card";
 import { RiImageAddFill } from "react-icons/ri";
-import { userDataContext } from "../context/userContext";
+import { UserDataContext } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 
@@ -16,7 +16,7 @@ const Customize = () => {
     setBackendImage,
     selectedImage,
     setSelectedImage,
-  } = useContext(userDataContext);
+  } = useContext(UserDataContext);
   const inputImage = useRef();
   const navigate = useNavigate();
 

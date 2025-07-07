@@ -1,5 +1,7 @@
+import moment from "moment";
 import User from "../models/user.model.js";
 import uploadOnCloudinary from "../config/cloudinary.js";
+import geminiResponse from "../gemini.js";
 
 export const getCurrentUser = async (req, res) => {
   try {
@@ -40,142 +42,121 @@ export const updateAssistant = async (req, res) => {
   }
 };
 
+
+
 export const askToAssistant = async (req, res) => {
   try {
     const { command } = req.body;
+
+    if (!command || typeof command !== "string") {
+      return res.status(400).json({ message: "Invalid command" });
+    }
+
     const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     const userName = user.name;
     const assistantName = user.assistantName;
 
-    const result = await geminiResponse(command, userName, assistantName);
-
-    const jsonMatch = result.match(/{[\s\S]}/);
-    if (!jsonMatch) {
-      return res
-        .status(400)
-        .json({
-          message: "Sorry, I can't understand your request. Please try again.",
-        });
+    const result = await geminiResponse(command,assistantName, userName);
+    if (!result || typeof result !== "string") {
+      return res.status(500).json({ message: "Invalid response from Gemini" });
     }
 
-    const gemResult = JSON.parse(jsonMatch[0]);
-    const type = gemResult.type;
-
-    switch (type) {
-      case "get_time":
-        return res.json({
-          type,
-          userInput: gemResult.userInput,
-          response: `The current time is ${moment().format("h:mm A")}`,
-        });
-
-      case "get_date":
-        return res.json({
-          type,
-          userInput: gemResult.userInput,
-          response: `Today's date is ${moment().format("Do MMMM YYYY")}`,
-        });
-
-      case "get_day":
-        return res.json({
-          type,
-          userInput: gemResult.userInput,
-          response: `Today is ${moment().format("dddd")}`,
-        });
-
-      case "get_month":
-        return res.json({
-          type,
-          userInput: gemResult.userInput,
-          response: `The current month is ${moment().format("MMMM")}`,
-        });
-
-      case "google_search":
-      case "youtube_search":
-      case "youtube_play":
-      case "calculator_open":
-      case "instagram_open":
-      case "facebook_open":
-      case "weather_show":
-      case "set_alarm":
-      case "set_reminder":
-      case "note_create":
-      case "news_update":
-      case "joke":
-      case "quote":
-      case "translate":
-      case "define_word":
-      case "call_contact":
-      case "send_message":
-      case "battery_status":
-      case "internet_speed_test":
-      case "system_status":
-      case "music_play":
-      case "calendar_event":
-      case "math_solver":
-      case "currency_convert":
-      case "unit_conversion":
-      case "wikipedia_search":
-      case "spell_check":
-      case "grammar_check":
-      case "summarize_text":
-      case "expand_text":
-      case "email_draft":
-      case "write_poem":
-      case "write_story":
-      case "paraphrase_text":
-      case "todo_list_add":
-      case "todo_list_show":
-      case "email_check":
-      case "map_direction":
-      case "chatgpt_query":
-      case "location_weather":
-      case "breathing_exercise":
-      case "meditation_guide":
-      case "fitness_tip":
-      case "diet_tip":
-      case "mood_booster":
-      case "mood_journal":
-      case "habit_tracker":
-      case "goal_reminder":
-      case "study_mode":
-      case "decision_advice":
-      case "open_app":
-      case "regional_support":
-      case "respond_in_language":
-      case "dual_language_mode":
-      case "detect_language":
-      case "small_talk":
-      case "greeting":
-      case "farewell":
-      case "feedback_response":
-      case "confirm_repeat":
-      case "follow_up_context":
-        return res.json({
-          type,
-          userInput: gemResult.userInput,
-          response: gemResult.response || "Here's what I found!",
-        });
-
-      case "general":
-        return res.json({
-          type,
-          userInput: gemResult.userInput,
-          response: gemResult.response || "Here is the information I found.",
-        });
-
-      case "fallback_type":
-      default:
-        return res.json({
-          type: "fallback_type",
-          userInput: gemResult?.userInput || command,
-          response:
-            "Sorry, I didn't understand that. Please try again with something else.",
-        });
+    const jsonMatch = result.match(/{[\s\S]+}/);
+    if (!jsonMatch || jsonMatch.length === 0) {
+      return res.status(400).json({
+        message: "Sorry, I can't understand your request. Please try again.",
+      });
     }
+
+    let gemResult;
+    try {
+      gemResult = JSON.parse(jsonMatch[0]);
+    } catch (err) {
+      return res.status(400).json({
+        message: "Response is not valid JSON. Please try again.",
+      });
+    }
+
+    const { type, userInput, response } = gemResult;
+
+    if (type === "get_time") {
+      return res.json({
+        type,
+        userInput,
+        response: `The current time is ${moment().format("h:mm A")}`,
+      });
+    }
+
+    if (type === "get_date") {
+      return res.json({
+        type,
+        userInput,
+        response: `Today's date is ${moment().format("Do MMMM YYYY")}`,
+      });
+    }
+
+    if (type === "get_day") {
+      return res.json({
+        type,
+        userInput,
+        response: `Today is ${moment().format("dddd")}`,
+      });
+    }
+
+    if (type === "get_month") {
+      return res.json({
+        type,
+        userInput,
+        response: `The current month is ${moment().format("MMMM")}`,
+      });
+    }
+
+    const validTypes = new Set([
+      "google_search", "youtube_search", "youtube_play", "calculator_open",
+      "instagram_open", "facebook_open", "weather_show", "set_alarm", "set_reminder",
+      "note_create", "news_update", "joke", "quote", "translate", "define_word",
+      "call_contact", "send_message", "battery_status", "internet_speed_test",
+      "system_status", "music_play", "calendar_event", "math_solver",
+      "currency_convert", "unit_conversion", "wikipedia_search", "spell_check",
+      "grammar_check", "summarize_text", "expand_text", "email_draft", "write_poem",
+      "write_story", "paraphrase_text", "todo_list_add", "todo_list_show", "email_check",
+      "map_direction", "chatgpt_query", "location_weather", "breathing_exercise",
+      "meditation_guide", "fitness_tip", "diet_tip", "mood_booster", "mood_journal",
+      "habit_tracker", "goal_reminder", "study_mode", "decision_advice", "open_app",
+      "regional_support", "respond_in_language", "dual_language_mode", "detect_language",
+      "small_talk", "greeting", "farewell", "feedback_response", "confirm_repeat",
+      "follow_up_context"
+    ]);
+
+    if (validTypes.has(type)) {
+      return res.json({
+        type,
+        userInput,
+        response: response || "Here's what I found!",
+      });
+    }
+
+    if (type === "general") {
+      return res.json({
+        type,
+        userInput,
+        response: response || "Here is the information I found.",
+      });
+    }
+    return res.json({
+      type: "general",
+      userInput: command,
+      response: result,
+    });
+
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Error in askToAssistant", error: error.message });
+    return res.status(500).json({
+      message: "Error in askToAssistant",
+      error: error.message
+    });
   }
 };
