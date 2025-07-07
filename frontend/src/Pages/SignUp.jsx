@@ -3,7 +3,7 @@ import React, { useContext, useState } from "react";
 import { LuEye } from "react-icons/lu";
 import { LuEyeClosed } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import { UserDataContext } from "../context/userContext";
+import { UserDataContext } from "../context/UserContext";
 import axios from "axios";
 
 
