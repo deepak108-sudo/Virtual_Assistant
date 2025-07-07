@@ -44,75 +44,57 @@ export const updateAssistant = async (req, res) => {
 
 
 
+
 export const askToAssistant = async (req, res) => {
   try {
     const { command } = req.body;
 
     if (!command || typeof command !== "string") {
-      return res.status(400).json({ message: "Invalid command" });
+      return res.status(400).json({ message: "Invalid command format." });
     }
 
     const user = await User.findById(req.userId);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found." });
     }
 
-    const userName = user.name;
-    const assistantName = user.assistantName;
+    // Save command to user history
+    user.history.push(command);
+    await user.save();
 
-    const result = await geminiResponse(command,assistantName, userName);
+    const result = await geminiResponse(command, user.assistantName, user.name);
+
     if (!result || typeof result !== "string") {
-      return res.status(500).json({ message: "Invalid response from Gemini" });
+      return res.status(500).json({ message: "Invalid response from Gemini." });
     }
 
     const jsonMatch = result.match(/{[\s\S]+}/);
-    if (!jsonMatch || jsonMatch.length === 0) {
-      return res.status(400).json({
-        message: "Sorry, I can't understand your request. Please try again.",
-      });
+    if (!jsonMatch) {
+      return res.status(400).json({ message: "Could not parse response JSON." });
     }
 
     let gemResult;
     try {
       gemResult = JSON.parse(jsonMatch[0]);
-    } catch (err) {
-      return res.status(400).json({
-        message: "Response is not valid JSON. Please try again.",
-      });
+    } catch {
+      return res.status(400).json({ message: "Malformed JSON in response." });
     }
 
     const { type, userInput, response } = gemResult;
 
+    // Fast paths for time/date responses
+    const now = moment();
     if (type === "get_time") {
-      return res.json({
-        type,
-        userInput,
-        response: `The current time is ${moment().format("h:mm A")}`,
-      });
+      return res.json({ type, userInput, response: `The current time is ${now.format("h:mm A")}` });
     }
-
     if (type === "get_date") {
-      return res.json({
-        type,
-        userInput,
-        response: `Today's date is ${moment().format("Do MMMM YYYY")}`,
-      });
+      return res.json({ type, userInput, response: `Today's date is ${now.format("Do MMMM YYYY")}` });
     }
-
     if (type === "get_day") {
-      return res.json({
-        type,
-        userInput,
-        response: `Today is ${moment().format("dddd")}`,
-      });
+      return res.json({ type, userInput, response: `Today is ${now.format("dddd")}` });
     }
-
     if (type === "get_month") {
-      return res.json({
-        type,
-        userInput,
-        response: `The current month is ${moment().format("MMMM")}`,
-      });
+      return res.json({ type, userInput, response: `The current month is ${now.format("MMMM")}` });
     }
 
     const validTypes = new Set([
@@ -132,31 +114,26 @@ export const askToAssistant = async (req, res) => {
       "follow_up_context"
     ]);
 
-    if (validTypes.has(type)) {
+    // If valid or general type, respond with natural Gemini response
+    if (validTypes.has(type) || type === "general") {
       return res.json({
         type,
         userInput,
-        response: response || "Here's what I found!",
+        response: response || "Here's what I found.",
       });
     }
 
-    if (type === "general") {
-      return res.json({
-        type,
-        userInput,
-        response: response || "Here is the information I found.",
-      });
-    }
+    // Final fallback (if Gemini returned unknown type)
     return res.json({
-      type: "general",
+      type: "fallback_type",
       userInput: command,
-      response: result,
+      response: "Sorry, I didn't understand that.",
     });
 
   } catch (error) {
     return res.status(500).json({
       message: "Error in askToAssistant",
-      error: error.message
+      error: error.message,
     });
   }
 };
