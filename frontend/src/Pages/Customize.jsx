@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState } from "react";
 import Card from "../component/Card";
 import { RiImageAddFill } from "react-icons/ri";
-import { UserDataContext } from "../context/userContext";
+import { UserDataContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
 
