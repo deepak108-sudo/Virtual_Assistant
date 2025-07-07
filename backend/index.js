@@ -13,7 +13,7 @@ const port = process.env.PORT || 8000;
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://virtualassistant-dp5l.onrender.com",
     credentials: true,
   })
 );
