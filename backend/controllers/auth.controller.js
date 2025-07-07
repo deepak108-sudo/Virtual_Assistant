@@ -39,9 +39,9 @@ export const signUp = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: "lax",
-      secure: false,
+      maxAge: 90 * 24 * 60 * 60 * 1000,
+      sameSite: "None",
+      secure: true,
     });
 
     const userResponse = { ...user._doc };
