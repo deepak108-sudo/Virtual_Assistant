@@ -63,11 +63,6 @@ Virtual_Assistant/
 │
 ├── README.md
 └── package.json
-
-bash
-Copy
-Edit
-
 </details>
 
 ---
@@ -98,19 +93,18 @@ cd Virtual_Assistant
 cd backend
 npm install
 Create a .env file in backend/ and add:
-
 MONGO_URI=your_mongodb_connection_string
 GEMINI_API_KEY=your_gemini_api_key
 JWT_SECRET=your_secret_key
 PORT=5000
 Run backend:
-
 npm start
 
 3️⃣ Setup Frontend
 cd ../frontend
 npm install
 npm run dev
+
 📬 Contact
 Author: Deepak Kumar
 GitHub: deepak108-sudo
