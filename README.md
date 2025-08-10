@@ -39,15 +39,17 @@ This assistant listens to voice commands, processes them in real-time, and respo
 
 ## 📂 Folder Structure
 
+<details>
+<summary>Click to expand</summary>
+
 Virtual_Assistant/
-│
 ├── backend/ # Node.js + Express backend
 │ ├── config/ # DB & API config files
 │ ├── controllers/ # API route handlers
 │ ├── models/ # MongoDB Mongoose schemas
 │ ├── routes/ # API endpoints
 │ ├── utils/ # Helper functions
-│ └── server.js # Entry point
+│ └── server.js # Backend entry point
 │
 ├── frontend/ # React.js frontend
 │ ├── src/
@@ -56,11 +58,17 @@ Virtual_Assistant/
 │ │ ├── hooks/ # Custom React hooks
 │ │ ├── assets/ # Images & icons
 │ │ └── App.jsx # Main app component
-│ └── package.json
+│ ├── package.json
+│ └── .gitignore
 │
-├── .gitignore
 ├── README.md
 └── package.json
+
+bash
+Copy
+Edit
+
+</details>
 
 ---
 
@@ -85,31 +93,21 @@ Virtual_Assistant/
 ```bash
 git clone https://github.com/deepak108-sudo/Virtual_Assistant.git
 cd Virtual_Assistant
+
 2️⃣ Setup Backend
-bash
-Copy
-Edit
 cd backend
 npm install
 Create a .env file in backend/ and add:
 
-ini
-Copy
-Edit
 MONGO_URI=your_mongodb_connection_string
 GEMINI_API_KEY=your_gemini_api_key
 JWT_SECRET=your_secret_key
 PORT=5000
 Run backend:
 
-bash
-Copy
-Edit
 npm start
+
 3️⃣ Setup Frontend
-bash
-Copy
-Edit
 cd ../frontend
 npm install
 npm run dev
