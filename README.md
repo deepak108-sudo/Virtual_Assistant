@@ -25,15 +25,15 @@ This assistant listens to voice commands, processes them in real-time, and respo
 
 ## 🛠 Tech Stack
 
-| Layer                | Technology Used        |
-| -------------------- | ---------------------- |
-| **Frontend**         | React.js, Tailwind CSS |
-| **Backend**          | Node.js, Express.js    |
-| **Database**         | MongoDB                |
-| **AI API**           | Gemini API             |
-| **State Management** | React Hooks & State    |
-| **Auth**             | JWT (JSON Web Token)   |
-| **Hosting**          | _(Add if deployed)_    |
+| Layer        | Technology Used |
+|--------------|----------------|
+| **Frontend** | React.js, Tailwind CSS |
+| **Backend**  | Node.js, Express.js |
+| **Database** | MongoDB |
+| **AI API**   | Gemini API |
+| **State Management** | React Hooks & State |
+| **Auth**     | JWT (JSON Web Token) |
+| **Hosting**  | *(Add if deployed)* |
 
 ---
 
@@ -62,10 +62,6 @@ Virtual_Assistant/
 ├── README.md
 └── package.json
 
-yaml
-Copy
-Edit
-
 ---
 
 ## 🖼 Architecture
@@ -73,7 +69,6 @@ Edit
 ![Architecture Diagram](virtual_assistant_architecture.png)
 
 **Flow:**
-
 1. User speaks into the **Frontend**.
 2. **React.js** sends command to **Node.js Backend**.
 3. Backend either:
@@ -82,22 +77,42 @@ Edit
 4. Backend sends processed results back to the frontend.
 5. Assistant speaks the response to the user.
 
-
-
 ---
 
 ## ⚙️ Installation & Running
 
 ### 1️⃣ Clone the Repository
-
 ```bash
 git clone https://github.com/deepak108-sudo/Virtual_Assistant.git
+cd Virtual_Assistant
+2️⃣ Setup Backend
+bash
+Copy
+Edit
+cd backend
+npm install
+Create a .env file in backend/ and add:
 
+ini
+Copy
+Edit
+MONGO_URI=your_mongodb_connection_string
+GEMINI_API_KEY=your_gemini_api_key
+JWT_SECRET=your_secret_key
+PORT=5000
+Run backend:
+
+bash
+Copy
+Edit
+npm start
+3️⃣ Setup Frontend
+bash
+Copy
+Edit
+cd ../frontend
+npm install
+npm run dev
 📬 Contact
 Author: Deepak Kumar
 GitHub: deepak108-sudo
-Codeforces: deepak108-sudo
-Email: your-email@example.com
-
-"The more you practice, the luckier you get." – Gary Player
-```
