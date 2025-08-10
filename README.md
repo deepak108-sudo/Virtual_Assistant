@@ -33,7 +33,6 @@ This assistant listens to voice commands, processes them in real-time, and respo
 | **AI API**   | Gemini API |
 | **State Management** | React Hooks & State |
 | **Auth**     | JWT (JSON Web Token) |
-| **Hosting**  | *(Add if deployed)* |
 
 ---
 
